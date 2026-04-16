@@ -1,0 +1,66 @@
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Layout } from './components/Layout';
+import { AdminRoute } from './components/AdminRoute';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminPage } from './pages/AdminPage';
+import { EventsPage } from './pages/EventsPage';
+import { EventDetailPage } from './pages/EventDetailPage';
+import { EventFormPage } from './pages/EventFormPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { AccountPage } from './pages/AccountPage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+
+export default function App() {
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/" element={<EventsPage />} />
+        <Route path="/events/:eventId" element={<EventDetailPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute>
+              <AccountPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/events/new"
+          element={
+            <AdminRoute>
+              <EventFormPage mode="create" />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/events/:eventId/edit"
+          element={
+            <AdminRoute>
+              <EventFormPage mode="edit" />
+            </AdminRoute>
+          }
+        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Layout>
+  );
+}
