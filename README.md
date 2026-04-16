@@ -26,8 +26,10 @@ This project includes:
 - Public event browsing
 - User registration/login
 - Role-based accounts: attendee, organizer, admin
+- Attendee-only public signup flow (role elevation managed by admin)
 - User dashboard with activity, badges, and progress meter
 - Event management with category and venue support
+- Organizer event submission with admin approval workflow
 - Ticket type management, ticket ordering, mock payment recording
 - Review and comment system for events
 - Account settings for profile and password updates
@@ -37,8 +39,9 @@ The app starts in `memory` mode by default for easy local testing, and can be sw
 ## Features
 
 - 8-bit arcade-inspired frontend styling and transitions
-- Role-based access (`admin`, `user`)
 - Role-based access (`admin`, `organizer`, `user`)
+- Public visibility gating for events (approved events are visible to attendees/public users)
+- Dedicated admin approvals page and organizer/admin event statistics page
 - JWT-based authentication
 - Event registration flow
 - Event CRUD + search/pagination endpoints
@@ -212,6 +215,7 @@ Most users only need `.env` changes. If you want custom behavior, edit these fil
 ### Auth
 
 - `POST /api/auth/register`
+  - Creates attendee (`user`) account only
 - `POST /api/auth/login`
 - `GET /api/auth/me`
 - `PUT /api/auth/me`
@@ -222,12 +226,20 @@ Most users only need `.env` changes. If you want custom behavior, edit these fil
 
 - `GET /api/events`
   - Supports query params: `search`, `page`, `limit`
-- `POST /api/events` (admin)
+  - Returns approved events for public/attendee users
+- `GET /api/events/manage` (organizer/admin)
+- `GET /api/events/pending` (admin)
+- `POST /api/events` (organizer/admin)
+  - Organizer-created events default to `pending`
+  - Admin-created events are auto-approved
 - `GET /api/events/:eventId`
-- `PUT /api/events/:eventId` (admin)
-- `DELETE /api/events/:eventId` (admin)
+  - Pending events are visible only to admin or event organizer
+- `POST /api/events/:eventId/approve` (admin)
+- `GET /api/events/:eventId/stats` (organizer/admin for manageable events)
+- `PUT /api/events/:eventId` (organizer/admin)
+- `DELETE /api/events/:eventId` (organizer/admin)
 - `POST /api/events/:eventId/register`
-- `GET /api/events/:eventId/registrations` (admin)
+- `GET /api/events/:eventId/registrations` (organizer/admin for manageable events)
 
 ### Metadata
 

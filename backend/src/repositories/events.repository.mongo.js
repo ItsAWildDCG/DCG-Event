@@ -8,9 +8,11 @@ function mapEvent(doc) {
     description: doc.description,
     location: doc.location,
     date: doc.date,
-    capacity: doc.capacity,
     createdBy: doc.createdBy.toString(),
     organizerId: doc.organizerId ? doc.organizerId.toString() : null,
+    approvalStatus: doc.approvalStatus || 'approved',
+    approvedBy: doc.approvedBy ? doc.approvedBy.toString() : null,
+    approvedAt: doc.approvedAt ? doc.approvedAt.toISOString() : null,
     categoryIds: (doc.categoryIds || []).map((id) => id.toString()),
     venueIds: (doc.venueIds || []).map((id) => id.toString()),
     createdAt: doc.createdAt.toISOString(),
@@ -32,17 +34,33 @@ export const eventsRepositoryMongo = {
     const search = String(options.search || '').trim();
     const page = Math.max(1, Number(options.page || 1));
     const limit = Math.max(1, Number(options.limit || 0));
+    const approvalStatus = options.approvalStatus;
+    const organizerId = options.organizerId;
 
-    const filter = search
-      ? {
-          $or: [
-            { title: { $regex: search, $options: 'i' } },
-            { description: { $regex: search, $options: 'i' } },
-            { location: { $regex: search, $options: 'i' } },
-            { date: { $regex: search, $options: 'i' } }
-          ]
-        }
-      : {};
+    const clauses = [];
+
+    if (search) {
+      clauses.push({
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } },
+          { location: { $regex: search, $options: 'i' } },
+          { date: { $regex: search, $options: 'i' } }
+        ]
+      });
+    }
+
+    if (approvalStatus === 'approved') {
+      clauses.push({ $or: [{ approvalStatus: 'approved' }, { approvalStatus: { $exists: false } }] });
+    } else if (approvalStatus) {
+      clauses.push({ approvalStatus });
+    }
+
+    if (organizerId) {
+      clauses.push({ organizerId });
+    }
+
+    const filter = clauses.length > 0 ? { $and: clauses } : {};
 
     if (!options.search && !options.page && !options.limit) {
       const docs = await EventModel.find(filter).sort({ date: 1 }).exec();

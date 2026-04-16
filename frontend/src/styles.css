@@ -234,6 +234,10 @@ textarea {
   margin-bottom: 1.4rem;
 }
 
+.ticket-manage-card {
+  margin-top: 1.8rem;
+}
+
 input:focus,
 textarea:focus {
   outline: 2px solid var(--amber);

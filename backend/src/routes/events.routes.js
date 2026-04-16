@@ -1,13 +1,40 @@
 import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
-export function createEventsRouter(eventsService, requireAuth, requireOrganizerOrAdmin) {
+export function createEventsRouter(
+  eventsService,
+  requireAuth,
+  optionalAuth,
+  requireAdmin,
+  requireOrganizerOrAdmin
+) {
   const router = Router();
 
   router.get(
     '/',
+    optionalAuth,
     asyncHandler(async (req, res) => {
-      const events = await eventsService.listEvents(req.query);
+      const events = await eventsService.listEvents(req.query, req.user);
+      res.json(events);
+    })
+  );
+
+  router.get(
+    '/pending',
+    requireAuth,
+    requireAdmin,
+    asyncHandler(async (req, res) => {
+      const events = await eventsService.listPendingEvents(req.user, req.query);
+      res.json(events);
+    })
+  );
+
+  router.get(
+    '/manage',
+    requireAuth,
+    requireOrganizerOrAdmin,
+    asyncHandler(async (req, res) => {
+      const events = await eventsService.listEvents({ ...req.query, manage: 'true' }, req.user);
       res.json(events);
     })
   );
@@ -17,16 +44,37 @@ export function createEventsRouter(eventsService, requireAuth, requireOrganizerO
     requireAuth,
     requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
-      const event = await eventsService.createEvent(req.body, req.user.id);
+      const event = await eventsService.createEvent(req.body, req.user);
       res.status(201).json(event);
     })
   );
 
   router.get(
     '/:eventId',
+    optionalAuth,
     asyncHandler(async (req, res) => {
-      const event = await eventsService.getEventById(req.params.eventId);
+      const event = await eventsService.getEventById(req.params.eventId, req.user);
       res.json(event);
+    })
+  );
+
+  router.post(
+    '/:eventId/approve',
+    requireAuth,
+    requireAdmin,
+    asyncHandler(async (req, res) => {
+      const event = await eventsService.approveEvent(req.params.eventId, req.user);
+      res.json(event);
+    })
+  );
+
+  router.get(
+    '/:eventId/stats',
+    requireAuth,
+    requireOrganizerOrAdmin,
+    asyncHandler(async (req, res) => {
+      const stats = await eventsService.getEventStats(req.params.eventId, req.user);
+      res.json(stats);
     })
   );
 
@@ -35,7 +83,7 @@ export function createEventsRouter(eventsService, requireAuth, requireOrganizerO
     requireAuth,
     requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
-      const event = await eventsService.updateEvent(req.params.eventId, req.body);
+      const event = await eventsService.updateEvent(req.params.eventId, req.body, req.user);
       res.json(event);
     })
   );
@@ -45,7 +93,7 @@ export function createEventsRouter(eventsService, requireAuth, requireOrganizerO
     requireAuth,
     requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
-      await eventsService.deleteEvent(req.params.eventId);
+      await eventsService.deleteEvent(req.params.eventId, req.user);
       res.status(204).send();
     })
   );
@@ -64,7 +112,7 @@ export function createEventsRouter(eventsService, requireAuth, requireOrganizerO
     requireAuth,
     requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
-      const regs = await eventsService.listRegistrationsForEvent(req.params.eventId);
+      const regs = await eventsService.listRegistrationsForEvent(req.params.eventId, req.user);
       res.json(regs);
     })
   );

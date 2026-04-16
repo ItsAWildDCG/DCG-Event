@@ -6,9 +6,11 @@ const eventSchema = new mongoose.Schema(
     description: { type: String, default: '' },
     location: { type: String, default: '' },
     date: { type: String, required: true },
-    capacity: { type: Number, required: true, min: 1 },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    approvalStatus: { type: String, enum: ['pending', 'approved'], default: 'pending' },
+    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    approvedAt: { type: Date, default: null },
     categoryIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
     venueIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Venue' }]
   },

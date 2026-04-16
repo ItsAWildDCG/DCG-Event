@@ -5,8 +5,7 @@ const initialForm = {
   title: '',
   description: '',
   date: '',
-  location: '',
-  capacity: 60
+  location: ''
 };
 
 export function AdminPage() {
@@ -78,10 +77,7 @@ export function AdminPage() {
     setStatus('');
 
     try {
-      await api.createEvent({
-        ...form,
-        capacity: Number(form.capacity)
-      });
+      await api.createEvent(form);
       setForm(initialForm);
       setStatus('Event created.');
       setPage(1);
@@ -206,16 +202,6 @@ export function AdminPage() {
               onChange={(e) => setForm((s) => ({ ...s, location: e.target.value }))}
             />
           </label>
-          <label>
-            Capacity
-            <input
-              required
-              type="number"
-              min={1}
-              value={form.capacity}
-              onChange={(e) => setForm((s) => ({ ...s, capacity: e.target.value }))}
-            />
-          </label>
           <button className="solid-btn">Create Event</button>
         </form>
       </div>
@@ -231,7 +217,7 @@ export function AdminPage() {
               <div>
                 <h3>{event.title}</h3>
                 <p>
-                  {event.date} | {event.location} | cap {event.capacity}
+                  {event.date} | {event.location}
                 </p>
               </div>
               <button className="ghost-btn" onClick={() => handleDelete(event.id)}>

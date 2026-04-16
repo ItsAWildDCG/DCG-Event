@@ -6,7 +6,7 @@ import { createEventsRouter } from './routes/events.routes.js';
 import { createCommerceRouter } from './routes/commerce.routes.js';
 import { createMetadataRouter } from './routes/metadata.routes.js';
 import { createReviewsRouter } from './routes/reviews.routes.js';
-import { requireAuth, requireAdmin, requireOrganizerOrAdmin } from './middleware/auth.js';
+import { requireAuth, optionalAuth, requireAdmin, requireOrganizerOrAdmin } from './middleware/auth.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 import { getRepositories } from './repositories/index.js';
 import { createAuthService } from './services/auth.service.js';
@@ -19,7 +19,7 @@ export function createApp() {
   const app = express();
   const { authRepository, eventsRepository, domainRepository } = getRepositories();
   const authService = createAuthService(authRepository, eventsRepository);
-  const eventsService = createEventsService(eventsRepository);
+  const eventsService = createEventsService(eventsRepository, domainRepository);
   const commerceService = createCommerceService(eventsRepository, domainRepository);
   const metadataService = createMetadataService(domainRepository);
   const reviewsService = createReviewsService(eventsRepository, domainRepository);
@@ -33,7 +33,10 @@ export function createApp() {
 
   app.use('/api/auth', createAuthRouter(authService, requireAuth));
   app.use('/api/admin', createAdminRouter(authService, requireAuth, requireAdmin));
-  app.use('/api/events', createEventsRouter(eventsService, requireAuth, requireOrganizerOrAdmin));
+  app.use(
+    '/api/events',
+    createEventsRouter(eventsService, requireAuth, optionalAuth, requireAdmin, requireOrganizerOrAdmin)
+  );
   app.use('/api/commerce', createCommerceRouter(commerceService, requireAuth, requireOrganizerOrAdmin));
   app.use('/api/meta', createMetadataRouter(metadataService, requireAuth, requireOrganizerOrAdmin));
   app.use('/api', createReviewsRouter(reviewsService, requireAuth));

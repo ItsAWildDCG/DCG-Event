@@ -134,6 +134,11 @@ export const domainRepositoryMongo = {
     return doc ? mapTicket(doc) : null;
   },
 
+  async deleteTicket(id) {
+    const deleted = await TicketModel.findByIdAndDelete(id).exec();
+    return Boolean(deleted);
+  },
+
   async createOrder(payload) {
     const created = await OrderModel.create(payload);
     return mapOrder(created);

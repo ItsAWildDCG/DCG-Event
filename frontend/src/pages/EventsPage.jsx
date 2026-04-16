@@ -61,9 +61,6 @@ export function EventsPage() {
             <p>
               <strong>Where:</strong> {event.location}
             </p>
-            <p>
-              <strong>Capacity:</strong> {event.capacity}
-            </p>
             <Link className="solid-btn inline" to={`/events/${event.id}`}>
               View details
             </Link>

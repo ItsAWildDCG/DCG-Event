@@ -20,6 +20,9 @@ Build working Event Management frontend and backend with API calls, then connect
 - [x] Organizer role added and enabled for event/ticket/meta management
 - [x] My Tickets order history page added
 - [x] Admin user management added (list users, update roles)
+- [x] Organizer-created events now require admin approval before public visibility
+- [x] Signup is attendee-only by default; role upgrades happen via admin role management
+- [x] Added dedicated admin approvals page and organizer/admin event statistics page
 - [ ] Atlas connection step pending user credentials
 
 ## Resume Checklist
@@ -47,9 +50,11 @@ Alternative root commands:
 ## Implemented Features
 - JWT auth scaffold: register, login, me
 - Event APIs: list, create, read, update, delete
+- Event APIs: approval workflow with pending queue, approve action, and manageable-event stats
 - Registration APIs: register for event, list registrations
 - Frontend pages: login, register, events list, event detail, create/edit event
 - Admin page: create/delete event management at /admin
+- Admin approvals page: pending organizer submissions at /admin/approvals
 - User dashboard: view registered events at /dashboard
 - User dashboard: activity timeline, XP score, badges, and completion meter
 - Account settings: update profile and password at /account
@@ -61,7 +66,7 @@ Alternative root commands:
 - Organizer account and permissions for management features
 - Protected routes and token persistence in localStorage
 - Repository abstraction with memory and mongo implementations
-- Role-based auth: admin and user roles
+- Role-based auth: admin, organizer, user roles
 - Startup seed: default admin account and 3 demo events
 - Startup seed: customer account with demo registrations
 

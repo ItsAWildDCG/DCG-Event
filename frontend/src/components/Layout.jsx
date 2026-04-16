@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 export function Layout({ children }) {
   const { isAuthenticated, user, logout } = useAuth();
   const isAdmin = user?.role === 'admin';
+  const isOrganizer = user?.role === 'organizer';
 
   return (
     <div className="app-shell">
@@ -16,6 +17,9 @@ export function Layout({ children }) {
           {isAuthenticated ? <NavLink to="/dashboard">Dashboard</NavLink> : null}
           {isAuthenticated ? <NavLink to="/my-tickets">My Tickets</NavLink> : null}
           {isAuthenticated ? <NavLink to="/account">Account</NavLink> : null}
+          {isAdmin || isOrganizer ? <NavLink to="/events/new">Create Event</NavLink> : null}
+          {isAdmin || isOrganizer ? <NavLink to="/events/stats">Event Stats</NavLink> : null}
+          {isAdmin ? <NavLink to="/admin/approvals">Approvals</NavLink> : null}
           {isAdmin ? <NavLink to="/admin">Admin Portal</NavLink> : null}
         </nav>
         <div className="auth-area">

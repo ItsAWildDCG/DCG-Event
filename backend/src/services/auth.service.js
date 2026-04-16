@@ -10,15 +10,14 @@ export function createAuthService(authRepository, eventsRepository) {
     });
   }
 
-  async function register({ name, email, password, role }) {
+  async function register({ name, email, password }) {
     const existing = await authRepository.findUserByEmail(email);
     if (existing) {
       throw new ApiError(409, 'Email already in use');
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const allowedRole = ['user', 'organizer'].includes(role) ? role : 'user';
-    const user = await authRepository.createUser({ name, email, passwordHash, role: allowedRole });
+    const user = await authRepository.createUser({ name, email, passwordHash, role: 'user' });
 
     return {
       token: signToken(user),

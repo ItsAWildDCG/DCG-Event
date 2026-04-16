@@ -91,6 +91,16 @@ export const domainRepositoryMemory = {
     return memoryStore.tickets.find((ticket) => ticket.id === id) || null;
   },
 
+  async deleteTicket(id) {
+    const idx = memoryStore.tickets.findIndex((ticket) => ticket.id === id);
+    if (idx === -1) {
+      return false;
+    }
+
+    memoryStore.tickets.splice(idx, 1);
+    return true;
+  },
+
   async createOrder(payload) {
     const order = {
       id: memoryStore.makeId(),

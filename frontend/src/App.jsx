@@ -1,11 +1,14 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { AdminRoute } from './components/AdminRoute';
+import { OrganizerOrAdminRoute } from './components/OrganizerOrAdminRoute';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AdminPage } from './pages/AdminPage';
+import { AdminApprovalsPage } from './pages/AdminApprovalsPage';
 import { EventsPage } from './pages/EventsPage';
 import { EventDetailPage } from './pages/EventDetailPage';
 import { EventFormPage } from './pages/EventFormPage';
+import { EventStatsPage } from './pages/EventStatsPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { AccountPage } from './pages/AccountPage';
 import { MyTicketsPage } from './pages/MyTicketsPage';
@@ -51,19 +54,35 @@ export default function App() {
           }
         />
         <Route
-          path="/events/new"
+          path="/admin/approvals"
           element={
             <AdminRoute>
-              <EventFormPage mode="create" />
+              <AdminApprovalsPage />
             </AdminRoute>
+          }
+        />
+        <Route
+          path="/events/stats"
+          element={
+            <OrganizerOrAdminRoute>
+              <EventStatsPage />
+            </OrganizerOrAdminRoute>
+          }
+        />
+        <Route
+          path="/events/new"
+          element={
+            <OrganizerOrAdminRoute>
+              <EventFormPage mode="create" />
+            </OrganizerOrAdminRoute>
           }
         />
         <Route
           path="/events/:eventId/edit"
           element={
-            <AdminRoute>
+            <OrganizerOrAdminRoute>
               <EventFormPage mode="edit" />
-            </AdminRoute>
+            </OrganizerOrAdminRoute>
           }
         />
         <Route path="/login" element={<LoginPage />} />

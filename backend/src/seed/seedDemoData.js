@@ -23,22 +23,19 @@ const DEMO_EVENTS = [
     title: 'Block Drop Championship',
     description: 'Stack and clear lines in our retro speed challenge.',
     location: 'Arcade Hall A',
-    date: '2026-05-11 19:30',
-    capacity: 64
+    date: '2026-05-11 19:30'
   },
   {
     title: 'Neon Grid Night',
     description: 'Community mixer with pixel art booths and synth tunes.',
     location: 'Downtown Retro Arena',
-    date: '2026-05-18 18:00',
-    capacity: 120
+    date: '2026-05-18 18:00'
   },
   {
     title: '8-Bit Builders Meetup',
     description: 'Show-and-tell for indie creators building game-inspired tools.',
     location: 'Lab 7, Innovation Hub',
-    date: '2026-06-02 17:45',
-    capacity: 80
+    date: '2026-06-02 17:45'
   }
 ];
 
@@ -108,6 +105,9 @@ export async function seedDemoData(authRepository, eventsRepository, domainRepos
         ...event,
         createdBy: admin.id,
         organizerId: organizer.id,
+        approvalStatus: 'approved',
+        approvedBy: admin.id,
+        approvedAt: new Date().toISOString(),
         categoryIds: categories.slice(0, 2).map((c) => c.id),
         venueIds: venues.slice(0, 1).map((v) => v.id)
       });
@@ -122,14 +122,14 @@ export async function seedDemoData(authRepository, eventsRepository, domainRepos
         eventId: event.id,
         type: 'Standard',
         price: 199000,
-        quantityAvailable: Math.max(10, Number(event.capacity) - 5)
+        quantityAvailable: 120
       });
 
       await domainRepository.createTicket({
         eventId: event.id,
         type: 'VIP',
         price: 499000,
-        quantityAvailable: Math.max(5, Math.floor(Number(event.capacity) / 4))
+        quantityAvailable: 40
       });
     }
   }

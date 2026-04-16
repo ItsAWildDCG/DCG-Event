@@ -6,8 +6,7 @@ const initialState = {
   title: '',
   description: '',
   date: '',
-  location: '',
-  capacity: 50
+  location: ''
 };
 
 export function EventFormPage({ mode }) {
@@ -29,8 +28,7 @@ export function EventFormPage({ mode }) {
           title: event.title,
           description: event.description,
           date: event.date,
-          location: event.location,
-          capacity: event.capacity
+          location: event.location
         });
       })
       .catch((err) => setError(err.message))
@@ -41,10 +39,7 @@ export function EventFormPage({ mode }) {
     e.preventDefault();
     setError('');
 
-    const payload = {
-      ...form,
-      capacity: Number(form.capacity)
-    };
+    const payload = { ...form };
 
     try {
       if (mode === 'create') {
@@ -97,16 +92,6 @@ export function EventFormPage({ mode }) {
           <input
             value={form.location}
             onChange={(e) => setForm((s) => ({ ...s, location: e.target.value }))}
-            required
-          />
-        </label>
-        <label>
-          Capacity
-          <input
-            type="number"
-            min={1}
-            value={form.capacity}
-            onChange={(e) => setForm((s) => ({ ...s, capacity: e.target.value }))}
             required
           />
         </label>

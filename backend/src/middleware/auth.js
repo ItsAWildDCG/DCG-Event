@@ -23,6 +23,29 @@ export function requireAuth(req, res, next) {
   }
 }
 
+export function optionalAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, env.jwtSecret);
+    req.user = {
+      id: decoded.sub,
+      email: decoded.email,
+      role: decoded.role || 'user'
+    };
+    next();
+  } catch {
+    req.user = null;
+    next();
+  }
+}
+
 export function requireAdmin(req, res, next) {
   if (!req.user || req.user.role !== 'admin') {
     return next(new ApiError(403, 'Admin access required'));

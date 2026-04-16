@@ -53,8 +53,12 @@ export const api = {
   changePassword: (payload) => request('/auth/me/password', { method: 'PUT', body: JSON.stringify(payload) }),
   myRegistrations: () => request('/auth/me/registrations'),
   listEvents: (params = {}) => request(`/events${buildQuery(params)}`),
+  listPendingEvents: (params = {}) => request(`/events/pending${buildQuery(params)}`),
+  listManageEvents: (params = {}) => request(`/events/manage${buildQuery(params)}`),
   getEvent: (eventId) => request(`/events/${eventId}`),
   createEvent: (payload) => request('/events', { method: 'POST', body: JSON.stringify(payload) }),
+  approveEvent: (eventId) => request(`/events/${eventId}/approve`, { method: 'POST' }),
+  getEventStats: (eventId) => request(`/events/${eventId}/stats`),
   updateEvent: (eventId, payload) =>
     request(`/events/${eventId}`, { method: 'PUT', body: JSON.stringify(payload) }),
   deleteEvent: (eventId) => request(`/events/${eventId}`, { method: 'DELETE' }),
@@ -63,6 +67,12 @@ export const api = {
   listEventTickets: (eventId) => request(`/commerce/events/${eventId}/tickets`),
   createTicket: (eventId, payload) =>
     request(`/commerce/events/${eventId}/tickets`, { method: 'POST', body: JSON.stringify(payload) }),
+  updateTicket: (eventId, ticketId, payload) =>
+    request(`/commerce/events/${eventId}/tickets/${ticketId}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    }),
+  deleteTicket: (eventId, ticketId) => request(`/commerce/events/${eventId}/tickets/${ticketId}`, { method: 'DELETE' }),
   createOrder: (eventId, payload) =>
     request(`/commerce/events/${eventId}/orders`, { method: 'POST', body: JSON.stringify(payload) }),
   myOrders: () => request('/commerce/my-orders'),
