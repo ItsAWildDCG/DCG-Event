@@ -10,14 +10,15 @@ export function createAuthService(authRepository, eventsRepository) {
     });
   }
 
-  async function register({ name, email, password }) {
+  async function register({ name, email, password, role }) {
     const existing = await authRepository.findUserByEmail(email);
     if (existing) {
       throw new ApiError(409, 'Email already in use');
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await authRepository.createUser({ name, email, passwordHash, role: 'user' });
+    const allowedRole = ['user', 'organizer'].includes(role) ? role : 'user';
+    const user = await authRepository.createUser({ name, email, passwordHash, role: allowedRole });
 
     return {
       token: signToken(user),
@@ -141,12 +142,44 @@ export function createAuthService(authRepository, eventsRepository) {
       .filter(Boolean);
   }
 
+  async function listUsers() {
+    const users = await authRepository.listUsers();
+    return users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role || 'user',
+      createdAt: user.createdAt
+    }));
+  }
+
+  async function updateUserRole(userId, role) {
+    const allowed = ['user', 'organizer', 'admin'];
+    if (!allowed.includes(role)) {
+      throw new ApiError(400, 'role must be one of user, organizer, admin');
+    }
+
+    const updated = await authRepository.updateUserRole(userId, role);
+    if (!updated) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    return {
+      id: updated.id,
+      name: updated.name,
+      email: updated.email,
+      role: updated.role || 'user'
+    };
+  }
+
   return {
     register,
     login,
     me,
     updateProfile,
     changePassword,
-    myRegistrations
+    myRegistrations,
+    listUsers,
+    updateUserRole
   };
 }

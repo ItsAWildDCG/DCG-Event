@@ -30,3 +30,11 @@ export function requireAdmin(req, res, next) {
 
   next();
 }
+
+export function requireOrganizerOrAdmin(req, res, next) {
+  if (!req.user || !['organizer', 'admin'].includes(req.user.role)) {
+    return next(new ApiError(403, 'Organizer or admin access required'));
+  }
+
+  next();
+}

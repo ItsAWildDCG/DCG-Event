@@ -50,8 +50,8 @@ export function AuthProvider({ children }) {
         applySession(result);
         return result.user;
       },
-      async register(name, email, password) {
-        const result = await api.register({ name, email, password });
+      async register(name, email, password, role = 'user') {
+        const result = await api.register({ name, email, password, role });
         applySession(result);
         return result.user;
       },

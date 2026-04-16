@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
-export function createEventsRouter(eventsService, requireAuth, requireAdmin) {
+export function createEventsRouter(eventsService, requireAuth, requireOrganizerOrAdmin) {
   const router = Router();
 
   router.get(
@@ -15,7 +15,7 @@ export function createEventsRouter(eventsService, requireAuth, requireAdmin) {
   router.post(
     '/',
     requireAuth,
-    requireAdmin,
+    requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
       const event = await eventsService.createEvent(req.body, req.user.id);
       res.status(201).json(event);
@@ -33,7 +33,7 @@ export function createEventsRouter(eventsService, requireAuth, requireAdmin) {
   router.put(
     '/:eventId',
     requireAuth,
-    requireAdmin,
+    requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
       const event = await eventsService.updateEvent(req.params.eventId, req.body);
       res.json(event);
@@ -43,7 +43,7 @@ export function createEventsRouter(eventsService, requireAuth, requireAdmin) {
   router.delete(
     '/:eventId',
     requireAuth,
-    requireAdmin,
+    requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
       await eventsService.deleteEvent(req.params.eventId);
       res.status(204).send();
@@ -62,7 +62,7 @@ export function createEventsRouter(eventsService, requireAuth, requireAdmin) {
   router.get(
     '/:eventId/registrations',
     requireAuth,
-    requireAdmin,
+    requireOrganizerOrAdmin,
     asyncHandler(async (req, res) => {
       const regs = await eventsService.listRegistrationsForEvent(req.params.eventId);
       res.json(regs);

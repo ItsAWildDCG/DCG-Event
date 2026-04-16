@@ -14,6 +14,7 @@ export function Layout({ children }) {
         <nav className="nav">
           <NavLink to="/">Events</NavLink>
           {isAuthenticated ? <NavLink to="/dashboard">Dashboard</NavLink> : null}
+          {isAuthenticated ? <NavLink to="/my-tickets">My Tickets</NavLink> : null}
           {isAuthenticated ? <NavLink to="/account">Account</NavLink> : null}
           {isAdmin ? <NavLink to="/admin">Admin Portal</NavLink> : null}
         </nav>

@@ -10,6 +10,9 @@ function mapEvent(doc) {
     date: doc.date,
     capacity: doc.capacity,
     createdBy: doc.createdBy.toString(),
+    organizerId: doc.organizerId ? doc.organizerId.toString() : null,
+    categoryIds: (doc.categoryIds || []).map((id) => id.toString()),
+    venueIds: (doc.venueIds || []).map((id) => id.toString()),
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString()
   };

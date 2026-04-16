@@ -49,5 +49,20 @@ export const authRepositoryMongo = {
     ).exec();
 
     return mapUser(doc);
+  },
+
+  async listUsers() {
+    const docs = await UserModel.find({}).sort({ createdAt: -1 }).exec();
+    return docs.map(mapUser);
+  },
+
+  async updateUserRole(id, role) {
+    const doc = await UserModel.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true, runValidators: true }
+    ).exec();
+
+    return mapUser(doc);
   }
 };

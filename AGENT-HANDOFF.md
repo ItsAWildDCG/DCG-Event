@@ -16,6 +16,10 @@ Build working Event Management frontend and backend with API calls, then connect
 - [x] Account settings page added for profile/password changes
 - [x] Admin search and pagination added
 - [x] Public event search added on registration/events page
+- [x] Requirement entities added: category, venue, ticket, order, payment, review
+- [x] Organizer role added and enabled for event/ticket/meta management
+- [x] My Tickets order history page added
+- [x] Admin user management added (list users, update roles)
 - [ ] Atlas connection step pending user credentials
 
 ## Resume Checklist
@@ -51,6 +55,10 @@ Alternative root commands:
 - Account settings: update profile and password at /account
 - Admin search and pagination: query + paging in /admin
 - Public event search: keyword filtering on / events list
+- Category and venue APIs + admin UI management section
+- Ticket type APIs and ticket purchase flow with mock payment records
+- Review APIs and review submission/list on event detail
+- Organizer account and permissions for management features
 - Protected routes and token persistence in localStorage
 - Repository abstraction with memory and mongo implementations
 - Role-based auth: admin and user roles
@@ -70,6 +78,8 @@ Alternative root commands:
 - Admin Password: Admin12345!
 - Customer Email: customer@dcg-event.local
 - Customer Password: Customer12345!
+- Organizer Email: organizer@dcg-event.local
+- Organizer Password: Organizer12345!
 
 ## Notes
 This file is intended for cross-session continuity.

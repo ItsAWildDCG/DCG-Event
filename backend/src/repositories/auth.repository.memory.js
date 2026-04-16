@@ -39,5 +39,19 @@ export const authRepositoryMemory = {
 
     user.passwordHash = passwordHash;
     return user;
+  },
+
+  async listUsers() {
+    return memoryStore.users;
+  },
+
+  async updateUserRole(id, role) {
+    const user = memoryStore.users.find((u) => u.id === id);
+    if (!user) {
+      return null;
+    }
+
+    user.role = role;
+    return user;
   }
 };

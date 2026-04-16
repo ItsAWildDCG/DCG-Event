@@ -179,6 +179,61 @@ textarea {
   font-size: 1.7rem;
 }
 
+.pixel-select {
+  width: 100%;
+  border: 3px solid var(--amber);
+  background: linear-gradient(180deg, #151d3f, #0d1330);
+  color: #f7f9ff;
+  padding: 0.5rem 2.1rem 0.5rem 0.65rem;
+  font: inherit;
+  font-size: 2rem;
+  line-height: 1.1;
+  box-shadow: 0 0 0 3px #101734, 5px 5px 0 #000;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.pixel-select option {
+  background: #0e1430;
+  color: #f7f9ff;
+}
+
+.pixel-select-wrap {
+  position: relative;
+}
+
+.pixel-select-arrow {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.72rem;
+  color: var(--amber);
+  pointer-events: none;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.detail-description {
+  font-size: 2rem;
+  line-height: 1.45;
+  margin-bottom: 0.7rem;
+  color: #e9f3ff;
+  letter-spacing: 0.2px;
+}
+
+.detail-meta {
+  font-size: 1.9rem;
+  line-height: 1.4;
+  margin: 0.45rem 0;
+}
+
+.detail-cta-row {
+  margin-bottom: 1.4rem;
+}
+
 input:focus,
 textarea:focus {
   outline: 2px solid var(--amber);

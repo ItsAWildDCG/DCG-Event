@@ -16,8 +16,8 @@ export function createAuthRouter(authService, requireAuth) {
     '/register',
     validateRegisterPayload,
     asyncHandler(async (req, res) => {
-      const { name, email, password } = req.body;
-      const result = await authService.register({ name, email, password });
+      const { name, email, password, role } = req.body;
+      const result = await authService.register({ name, email, password, role });
       res.status(201).json(result);
     })
   );

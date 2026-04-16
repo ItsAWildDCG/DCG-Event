@@ -59,5 +59,23 @@ export const api = {
     request(`/events/${eventId}`, { method: 'PUT', body: JSON.stringify(payload) }),
   deleteEvent: (eventId) => request(`/events/${eventId}`, { method: 'DELETE' }),
   registerForEvent: (eventId) => request(`/events/${eventId}/register`, { method: 'POST' }),
-  listRegistrations: (eventId) => request(`/events/${eventId}/registrations`)
+  listRegistrations: (eventId) => request(`/events/${eventId}/registrations`),
+  listEventTickets: (eventId) => request(`/commerce/events/${eventId}/tickets`),
+  createTicket: (eventId, payload) =>
+    request(`/commerce/events/${eventId}/tickets`, { method: 'POST', body: JSON.stringify(payload) }),
+  createOrder: (eventId, payload) =>
+    request(`/commerce/events/${eventId}/orders`, { method: 'POST', body: JSON.stringify(payload) }),
+  myOrders: () => request('/commerce/my-orders'),
+  listEventOrders: (eventId) => request(`/commerce/events/${eventId}/orders`),
+  listOrderPayments: (orderId) => request(`/commerce/orders/${orderId}/payments`),
+  listEventReviews: (eventId) => request(`/events/${eventId}/reviews`),
+  addEventReview: (eventId, payload) =>
+    request(`/events/${eventId}/reviews`, { method: 'POST', body: JSON.stringify(payload) }),
+  listCategories: () => request('/meta/categories'),
+  createCategory: (payload) => request('/meta/categories', { method: 'POST', body: JSON.stringify(payload) }),
+  listVenues: () => request('/meta/venues'),
+  createVenue: (payload) => request('/meta/venues', { method: 'POST', body: JSON.stringify(payload) }),
+  listUsers: () => request('/admin/users'),
+  updateUserRole: (userId, role) =>
+    request(`/admin/users/${userId}/role`, { method: 'PUT', body: JSON.stringify({ role }) })
 };

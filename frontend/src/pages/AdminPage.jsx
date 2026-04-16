@@ -11,7 +11,12 @@ const initialForm = {
 
 export function AdminPage() {
   const [events, setEvents] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [venues, setVenues] = useState([]);
+  const [users, setUsers] = useState([]);
   const [form, setForm] = useState(initialForm);
+  const [categoryName, setCategoryName] = useState('');
+  const [venueForm, setVenueForm] = useState({ name: '', city: '', address: '', capacity: 100 });
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -37,8 +42,29 @@ export function AdminPage() {
     }
   }
 
+  async function loadMeta() {
+    try {
+      const [categoryData, venueData] = await Promise.all([api.listCategories(), api.listVenues()]);
+      setCategories(Array.isArray(categoryData) ? categoryData : []);
+      setVenues(Array.isArray(venueData) ? venueData : []);
+    } catch {
+      // Keep admin page usable even if meta data load fails.
+    }
+  }
+
+  async function loadUsers() {
+    try {
+      const userData = await api.listUsers();
+      setUsers(Array.isArray(userData) ? userData : []);
+    } catch {
+      // Keep page usable even if user management is unavailable.
+    }
+  }
+
   useEffect(() => {
     loadEvents();
+    loadMeta();
+    loadUsers();
   }, [search, page]);
 
   function handleSearchChange(value) {
@@ -60,6 +86,49 @@ export function AdminPage() {
       setStatus('Event created.');
       setPage(1);
       await loadEvents();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleCreateCategory(e) {
+    e.preventDefault();
+    setError('');
+    setStatus('');
+    try {
+      await api.createCategory({ name: categoryName });
+      setCategoryName('');
+      setStatus('Category created.');
+      await loadMeta();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleCreateVenue(e) {
+    e.preventDefault();
+    setError('');
+    setStatus('');
+    try {
+      await api.createVenue({
+        ...venueForm,
+        capacity: Number(venueForm.capacity)
+      });
+      setVenueForm({ name: '', city: '', address: '', capacity: 100 });
+      setStatus('Venue created.');
+      await loadMeta();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleChangeRole(userId, role) {
+    setError('');
+    setStatus('');
+    try {
+      await api.updateUserRole(userId, role);
+      setStatus('User role updated.');
+      await loadUsers();
     } catch (err) {
       setError(err.message);
     }
@@ -181,6 +250,105 @@ export function AdminPage() {
           <button className="ghost-btn" type="button" onClick={() => goToPage(page + 1)} disabled={page >= totalPages}>
             Next
           </button>
+        </div>
+      </div>
+
+      <div className="card admin-card">
+        <h2>Categories</h2>
+        <form className="form-grid" onSubmit={handleCreateCategory}>
+          <label>
+            Category Name
+            <input value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required />
+          </label>
+          <button className="ghost-btn">Create Category</button>
+        </form>
+        <div className="admin-list">
+          {categories.map((category) => (
+            <article key={category.id} className="admin-row">
+              <div>
+                <h3>{category.name}</h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="card admin-card">
+        <h2>Venues</h2>
+        <form className="form-grid" onSubmit={handleCreateVenue}>
+          <label>
+            Name
+            <input
+              value={venueForm.name}
+              onChange={(e) => setVenueForm((s) => ({ ...s, name: e.target.value }))}
+              required
+            />
+          </label>
+          <label>
+            City
+            <input
+              value={venueForm.city}
+              onChange={(e) => setVenueForm((s) => ({ ...s, city: e.target.value }))}
+              required
+            />
+          </label>
+          <label>
+            Address
+            <input
+              value={venueForm.address}
+              onChange={(e) => setVenueForm((s) => ({ ...s, address: e.target.value }))}
+            />
+          </label>
+          <label>
+            Capacity
+            <input
+              type="number"
+              min={1}
+              value={venueForm.capacity}
+              onChange={(e) => setVenueForm((s) => ({ ...s, capacity: e.target.value }))}
+              required
+            />
+          </label>
+          <button className="ghost-btn">Create Venue</button>
+        </form>
+        <div className="admin-list">
+          {venues.map((venue) => (
+            <article key={venue.id} className="admin-row">
+              <div>
+                <h3>{venue.name}</h3>
+                <p>
+                  {venue.city} | cap {venue.capacity}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="card admin-card">
+        <h2>Users</h2>
+        <div className="admin-list">
+          {users.map((u) => (
+            <article key={u.id} className="admin-row">
+              <div>
+                <h3>{u.name}</h3>
+                <p>
+                  {u.email} | {u.role}
+                </p>
+              </div>
+              <div className="action-row">
+                <button className="ghost-btn" onClick={() => handleChangeRole(u.id, 'user')}>
+                  User
+                </button>
+                <button className="ghost-btn" onClick={() => handleChangeRole(u.id, 'organizer')}>
+                  Organizer
+                </button>
+                <button className="ghost-btn" onClick={() => handleChangeRole(u.id, 'admin')}>
+                  Admin
+                </button>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

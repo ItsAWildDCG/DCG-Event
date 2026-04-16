@@ -25,8 +25,11 @@ This project includes:
 
 - Public event browsing
 - User registration/login
+- Role-based accounts: attendee, organizer, admin
 - User dashboard with activity, badges, and progress meter
-- Admin portal for event management (create/delete) with search and pagination
+- Event management with category and venue support
+- Ticket type management, ticket ordering, mock payment recording
+- Review and comment system for events
 - Account settings for profile and password updates
 
 The app starts in `memory` mode by default for easy local testing, and can be switched to `mongo` mode to use MongoDB Atlas.
@@ -35,9 +38,14 @@ The app starts in `memory` mode by default for easy local testing, and can be sw
 
 - 8-bit arcade-inspired frontend styling and transitions
 - Role-based access (`admin`, `user`)
+- Role-based access (`admin`, `organizer`, `user`)
 - JWT-based authentication
 - Event registration flow
-- Admin-only event management endpoints
+- Event CRUD + search/pagination endpoints
+- Category and venue management
+- Ticketing + order + payment modules
+- Event review module
+- Admin user management (list users, update roles)
 - Seeded local demo users and demo events
 
 ## Tech Stack
@@ -221,6 +229,32 @@ Most users only need `.env` changes. If you want custom behavior, edit these fil
 - `POST /api/events/:eventId/register`
 - `GET /api/events/:eventId/registrations` (admin)
 
+### Metadata
+
+- `GET /api/meta/categories`
+- `POST /api/meta/categories` (organizer/admin)
+- `GET /api/meta/venues`
+- `POST /api/meta/venues` (organizer/admin)
+
+### Commerce
+
+- `GET /api/commerce/events/:eventId/tickets`
+- `POST /api/commerce/events/:eventId/tickets` (organizer/admin)
+- `POST /api/commerce/events/:eventId/orders` (attendee/authenticated)
+- `GET /api/commerce/my-orders`
+- `GET /api/commerce/events/:eventId/orders` (organizer/admin)
+- `GET /api/commerce/orders/:orderId/payments`
+
+### Admin
+
+- `GET /api/admin/users` (admin)
+- `PUT /api/admin/users/:userId/role` (admin)
+
+### Reviews
+
+- `GET /api/events/:eventId/reviews`
+- `POST /api/events/:eventId/reviews`
+
 ## Demo Accounts (Local Memory Mode)
 
 These are auto-seeded in memory mode for quick testing.
@@ -231,6 +265,9 @@ These are auto-seeded in memory mode for quick testing.
 - Customer:
   - Email: `customer@dcg-event.local`
   - Password: `Customer12345!`
+- Organizer:
+  - Email: `organizer@dcg-event.local`
+  - Password: `Organizer12345!`
 
 ## Development Notes
 

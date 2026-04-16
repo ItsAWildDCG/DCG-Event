@@ -8,5 +8,11 @@ export const memoryStore = {
   users: [],
   events: [],
   registrations: [],
+  categories: [],
+  venues: [],
+  tickets: [],
+  orders: [],
+  payments: [],
+  reviews: [],
   makeId
 };

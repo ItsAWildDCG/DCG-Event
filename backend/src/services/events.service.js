@@ -6,8 +6,8 @@ export function createEventsService(eventsRepository) {
   }
 
   async function createEvent(payload, userId) {
-    if (!payload.title || !payload.location || !payload.date || !payload.capacity) {
-      throw new ApiError(400, 'title, location, date, capacity are required');
+    if (!payload.title || !payload.date || !payload.capacity) {
+      throw new ApiError(400, 'title, date, capacity are required');
     }
 
     const capacity = Number(payload.capacity);
@@ -18,10 +18,13 @@ export function createEventsService(eventsRepository) {
     return eventsRepository.createEvent({
       title: payload.title,
       description: payload.description || '',
-      location: payload.location,
+      location: payload.location || '',
       date: payload.date,
       capacity,
-      createdBy: userId
+      createdBy: userId,
+      organizerId: payload.organizerId || userId,
+      categoryIds: Array.isArray(payload.categoryIds) ? payload.categoryIds : [],
+      venueIds: Array.isArray(payload.venueIds) ? payload.venueIds : []
     });
   }
 

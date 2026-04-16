@@ -40,6 +40,9 @@ export const eventsRepositoryMemory = {
   async createEvent(payload) {
     const event = {
       id: memoryStore.makeId(),
+      organizerId: payload.organizerId || payload.createdBy,
+      categoryIds: payload.categoryIds || [],
+      venueIds: payload.venueIds || [],
       ...payload,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()

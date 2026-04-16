@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export function RegisterPage() {
     setLoading(true);
 
     try {
-      const account = await register(form.name, form.email, form.password);
+      const account = await register(form.name, form.email, form.password, form.role);
       navigate(account?.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
       setError(err.message);
@@ -54,6 +54,17 @@ export function RegisterPage() {
             required
             minLength={6}
           />
+        </label>
+        <label>
+          Account Type
+          <select
+            className="pixel-select"
+            value={form.role}
+            onChange={(e) => setForm((s) => ({ ...s, role: e.target.value }))}
+          >
+            <option value="user">Attendee</option>
+            <option value="organizer">Organizer</option>
+          </select>
         </label>
         {error ? <p className="error">{error}</p> : null}
         <button className="solid-btn" disabled={loading}>
