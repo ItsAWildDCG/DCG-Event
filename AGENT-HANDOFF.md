@@ -23,14 +23,19 @@ Build working Event Management frontend and backend with API calls, then connect
 - [x] Organizer-created events now require admin approval before public visibility
 - [x] Signup is attendee-only by default; role upgrades happen via admin role management
 - [x] Added dedicated admin approvals page and organizer/admin event statistics page
-- [ ] Atlas connection step pending user credentials
+- [x] Atlas connection configured and validated against EventManagement
+- [x] Mongo mode no longer auto-seeds by default (`SEED_DEMO_DATA=false`)
+- [x] Backend retargeted to EventManagement schema (capitalized collections + numeric IDs)
+- [x] Login now supports legacy plaintext Atlas passwords and auto-migrates to bcrypt on successful login
+- [x] Ticket schema fixed for numeric `eventId` (avoids ObjectId cast errors)
+- [x] Payment and order writes aligned to Atlas snake_case fields (`payment_*`, `registration_date`)
 
 ## Resume Checklist
-1. Request Atlas details from user.
-2. Create backend .env from backend/.env.example.
-3. Set STORAGE_MODE=mongo and configure MONGODB_URI.
-4. Restart backend and re-run API smoke tests.
-5. Validate persistence by creating user/event and reading back after restart.
+1. Keep backend in mongo mode with EventManagement in `.env`.
+2. Start backend and frontend.
+3. Run attendee smoke test (register/login/events/tickets/order/review/my-orders).
+4. If needed, run organizer/admin smoke test for approval workflow.
+5. Optional: run one-time migration for legacy mixed camelCase payment fields.
 
 ## Commands
 - Backend: cd backend && npm run dev
@@ -43,9 +48,10 @@ Alternative root commands:
 ## Required Env (Backend)
 - PORT=5000
 - JWT_SECRET=change_me
-- STORAGE_MODE=memory
-- MONGODB_URI=
-- MONGODB_DB_NAME=
+- STORAGE_MODE=mongo
+- MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>/
+- MONGODB_DB_NAME=EventManagement
+- SEED_DEMO_DATA=false
 
 ## Implemented Features
 - JWT auth scaffold: register, login, me
@@ -71,14 +77,15 @@ Alternative root commands:
 - Startup seed: customer account with demo registrations
 
 ## Validation Snapshot
-- Backend booted on http://localhost:5000 in memory mode
-- Smoke test passed: health, register, create event, register for event
-- Smoke test passed: admin can create/delete, non-admin forbidden for event management
-- Smoke test passed: dashboard list, profile update, and password update
+- Backend booted on http://localhost:5000 in mongo mode
+- Atlas/API counts matched for EventManagement (`events=200`, `categories=30`, `venues=20`)
+- Smoke test passed: health, register, login, list events, list tickets, create order, add review, my-orders
+- Login verified with Atlas accounts using legacy password format (and auto-migration to bcrypt)
+- New payment/order records verified in Atlas with snake_case fields
 - Frontend dev server booted on http://localhost:5173
 - Frontend production build passed
 
-## Seed Credentials (Memory Mode)
+## Seed Credentials (Memory Mode Only)
 - Admin Email: admin@dcg-event.local
 - Admin Password: Admin12345!
 - Customer Email: customer@dcg-event.local
@@ -91,4 +98,4 @@ This file is intended for cross-session continuity.
 Update this after every milestone.
 
 ## Next Session Entry Point
-Start from Atlas connection step only. Core frontend and backend scaffold is complete.
+Start from smoke/regression validation in mongo mode. Atlas integration and EventManagement schema alignment are complete.

@@ -2,15 +2,17 @@ import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
-    ticketId: { type: mongoose.Schema.Types.ObjectId, ref: 'Ticket', required: true },
+    _id: { type: Number },
+    userId: { type: mongoose.Schema.Types.Mixed, required: true },
+    eventId: { type: mongoose.Schema.Types.Mixed, required: true },
+    ticketId: { type: mongoose.Schema.Types.Mixed, default: null },
     quantity: { type: Number, required: true, min: 1 },
     totalAmount: { type: Number, required: true, min: 0 },
     status: { type: String, enum: ['pending', 'paid', 'failed', 'cancelled'], default: 'paid' },
-    registrationDate: { type: String, required: true }
+    registrationDate: { type: String, default: null },
+    registration_date: { type: String, default: null }
   },
-  { timestamps: true }
+  { strict: false, collection: 'Order' }
 );
 
-export const OrderModel = mongoose.model('Order', orderSchema);
+export const OrderModel = mongoose.model('Order', orderSchema, 'Order');

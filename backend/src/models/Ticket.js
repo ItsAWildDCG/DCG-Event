@@ -2,14 +2,16 @@ import mongoose from 'mongoose';
 
 const ticketSchema = new mongoose.Schema(
   {
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
+    _id: { type: Number },
+    eventId: { type: Number, required: true },
     type: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
-    quantityAvailable: { type: Number, required: true, min: 0 }
+    quantityAvailable: { type: Number, required: true, min: 0 },
+    quantity_available: { type: Number, default: null }
   },
-  { timestamps: true }
+  { strict: false, collection: 'Ticket' }
 );
 
 ticketSchema.index({ eventId: 1, type: 1 }, { unique: true });
 
-export const TicketModel = mongoose.model('Ticket', ticketSchema);
+export const TicketModel = mongoose.model('Ticket', ticketSchema, 'Ticket');

@@ -10,14 +10,36 @@ export function createAuthService(authRepository, eventsRepository) {
     });
   }
 
+  function isBcryptHash(value) {
+    return typeof value === 'string' && value.startsWith('$2') && value.length > 20;
+  }
+
+  async function verifyPassword(plainPassword, storedPasswordHash) {
+    if (!storedPasswordHash) {
+      return false;
+    }
+
+    if (isBcryptHash(storedPasswordHash)) {
+      return bcrypt.compare(plainPassword, storedPasswordHash);
+    }
+
+    return plainPassword === storedPasswordHash;
+  }
+
   async function register({ name, email, password }) {
-    const existing = await authRepository.findUserByEmail(email);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const existing = await authRepository.findUserByEmail(normalizedEmail);
     if (existing) {
       throw new ApiError(409, 'Email already in use');
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await authRepository.createUser({ name, email, passwordHash, role: 'user' });
+    const user = await authRepository.createUser({
+      name,
+      email: normalizedEmail,
+      passwordHash,
+      role: 'user'
+    });
 
     return {
       token: signToken(user),
@@ -31,14 +53,20 @@ export function createAuthService(authRepository, eventsRepository) {
   }
 
   async function login({ email, password }) {
-    const user = await authRepository.findUserByEmail(email);
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user = await authRepository.findUserByEmail(normalizedEmail);
     if (!user) {
       throw new ApiError(401, 'Invalid credentials');
     }
 
-    const valid = await bcrypt.compare(password, user.passwordHash);
+    const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
       throw new ApiError(401, 'Invalid credentials');
+    }
+
+    if (!isBcryptHash(user.passwordHash)) {
+      const migratedHash = await bcrypt.hash(password, 10);
+      await authRepository.updateUserPassword(user.id, migratedHash);
     }
 
     return {
@@ -101,7 +129,7 @@ export function createAuthService(authRepository, eventsRepository) {
       throw new ApiError(404, 'User not found');
     }
 
-    const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+    const valid = await verifyPassword(currentPassword, user.passwordHash);
     if (!valid) {
       throw new ApiError(401, 'Current password is incorrect');
     }

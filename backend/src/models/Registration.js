@@ -2,12 +2,13 @@ import mongoose from 'mongoose';
 
 const registrationSchema = new mongoose.Schema(
   {
-    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    _id: { type: Number },
+    eventId: { type: mongoose.Schema.Types.Mixed, required: true },
+    userId: { type: mongoose.Schema.Types.Mixed, required: true }
   },
-  { timestamps: true }
+  { strict: false, collection: 'Registration' }
 );
 
 registrationSchema.index({ eventId: 1, userId: 1 }, { unique: true });
 
-export const RegistrationModel = mongoose.model('Registration', registrationSchema);
+export const RegistrationModel = mongoose.model('Registration', registrationSchema, 'Registration');

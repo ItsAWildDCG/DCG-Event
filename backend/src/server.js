@@ -7,15 +7,24 @@ import { seedDemoData } from './seed/seedDemoData.js';
 async function bootstrap() {
   await connectMongoIfEnabled();
   const { authRepository, eventsRepository, domainRepository } = getRepositories();
-  const seedResult = await seedDemoData(authRepository, eventsRepository, domainRepository);
+  let seedResult = null;
+
+  if (env.seedDemoData) {
+    seedResult = await seedDemoData(authRepository, eventsRepository, domainRepository);
+  }
+
   const app = createApp();
 
   app.listen(env.port, () => {
     console.log(`Backend listening on http://localhost:${env.port}`);
     console.log(`Storage mode: ${env.storageMode}`);
-    console.log(`Seeded admin: ${seedResult.adminEmail}`);
-    console.log(`Seeded organizer: ${seedResult.organizerEmail}`);
-    console.log(`Demo events available: ${seedResult.demoEventCount}`);
+    console.log(`Seed demo data: ${env.seedDemoData ? 'enabled' : 'disabled'}`);
+
+    if (seedResult) {
+      console.log(`Seeded admin: ${seedResult.adminEmail}`);
+      console.log(`Seeded organizer: ${seedResult.organizerEmail}`);
+      console.log(`Demo events available: ${seedResult.demoEventCount}`);
+    }
   });
 }
 

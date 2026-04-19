@@ -2,9 +2,10 @@ import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema(
   {
+    _id: { type: Number },
     name: { type: String, required: true, unique: true }
   },
-  { timestamps: true }
+  { strict: false, collection: 'Category' }
 );
 
-export const CategoryModel = mongoose.model('Category', categorySchema);
+export const CategoryModel = mongoose.model('Category', categorySchema, 'Category');

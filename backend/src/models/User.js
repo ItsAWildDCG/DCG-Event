@@ -2,12 +2,15 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
+    _id: { type: Number },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    passwordHash: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'organizer', 'user'], default: 'user' }
+    password: { type: String, required: true },
+    phone: { type: String, default: '' },
+    role: { type: String, enum: ['admin', 'organizer', 'user'], default: 'user' },
+    created_at: { type: String, default: null }
   },
-  { timestamps: true }
+  { strict: false, collection: 'User' }
 );
 
-export const UserModel = mongoose.model('User', userSchema);
+export const UserModel = mongoose.model('User', userSchema, 'User');

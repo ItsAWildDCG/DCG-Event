@@ -137,7 +137,8 @@ PORT=5000
 JWT_SECRET=change_me_to_a_long_random_secret
 STORAGE_MODE=memory
 MONGODB_URI=
-MONGODB_DB_NAME=dcg_event
+MONGODB_DB_NAME=EventManagement
+SEED_DEMO_DATA=false
 ```
 
 `STORAGE_MODE` supports:
@@ -166,8 +167,9 @@ Edit `backend/.env`:
 ```bash
 STORAGE_MODE=mongo
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/
-MONGODB_DB_NAME=dcg_event
+MONGODB_DB_NAME=EventManagement
 JWT_SECRET=your_strong_secret
+SEED_DEMO_DATA=false
 ```
 
 ### Step 3: Restart backend
@@ -203,7 +205,10 @@ Most users only need `.env` changes. If you want custom behavior, edit these fil
 ### Atlas readiness notes
 
 - `memory` mode seed data is local-only.
-- In `mongo` mode, seed logic still runs at startup if collections are empty.
+- In `mongo` mode, seeding is controlled by `SEED_DEMO_DATA` and should stay `false` for live Atlas usage.
+- This backend is aligned to EventManagement-style schema: capitalized collection names and numeric IDs.
+- Login supports legacy plaintext password records in Atlas and auto-migrates them to bcrypt on successful login.
+- New payment and order records are persisted in Atlas snake_case fields (`payment_method`, `payment_status`, `payment_date`, `registration_date`) while API responses remain camelCase for frontend compatibility.
 - For production use, rotate secrets and use environment-specific `.env` handling.
 
 ## API Overview
