@@ -220,6 +220,29 @@ export function EventDetailPage() {
       <p className="detail-meta">
         <strong>Location:</strong> {event.location}
       </p>
+      {Array.isArray(event.venues) && event.venues.length > 0 ? (
+        <div className="card form-card">
+          <h2>Venue Details</h2>
+          <div className="admin-list">
+            {event.venues.map((venue) => (
+              <article key={venue.id} className="admin-row">
+                <div>
+                  <h3>{venue.name || 'Venue'}</h3>
+                  <p>
+                    <strong>Address:</strong> {venue.address || 'N/A'}
+                  </p>
+                  <p>
+                    <strong>City:</strong> {venue.city || 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Capacity:</strong> {venue.capacity ?? 'N/A'}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : null}
       {message ? <p className="success">{message}</p> : null}
       {error ? <p className="error">{error}</p> : null}
       <div className="action-row detail-cta-row">

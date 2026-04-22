@@ -85,6 +85,8 @@ export const api = {
   createCategory: (payload) => request('/meta/categories', { method: 'POST', body: JSON.stringify(payload) }),
   listVenues: () => request('/meta/venues'),
   createVenue: (payload) => request('/meta/venues', { method: 'POST', body: JSON.stringify(payload) }),
+  updateVenue: (venueId, payload) =>
+    request(`/meta/venues/${venueId}`, { method: 'PUT', body: JSON.stringify(payload) }),
   listUsers: () => request('/admin/users'),
   updateUserRole: (userId, role) =>
     request(`/admin/users/${userId}/role`, { method: 'PUT', body: JSON.stringify({ role }) })

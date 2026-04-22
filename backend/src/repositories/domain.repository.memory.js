@@ -49,6 +49,23 @@ export const domainRepositoryMemory = {
     return venue;
   },
 
+  async updateVenue(id, updates) {
+    const idx = memoryStore.venues.findIndex((venue) => venue.id === id);
+    if (idx === -1) {
+      return null;
+    }
+
+    memoryStore.venues[idx] = {
+      ...memoryStore.venues[idx],
+      ...updates,
+      capacity:
+        updates.capacity !== undefined ? Number(updates.capacity) : memoryStore.venues[idx].capacity,
+      updatedAt: new Date().toISOString()
+    };
+
+    return memoryStore.venues[idx];
+  },
+
   async getVenueById(id) {
     return memoryStore.venues.find((v) => v.id === id) || null;
   },

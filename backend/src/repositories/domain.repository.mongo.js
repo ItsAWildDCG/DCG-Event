@@ -138,6 +138,21 @@ export const domainRepositoryMongo = {
     return mapVenue(created);
   },
 
+  async updateVenue(id, updates) {
+    const doc = await VenueModel.findByIdAndUpdate(
+      toNumericId(id),
+      {
+        ...updates,
+        capacity: updates.capacity !== undefined ? Number(updates.capacity) : undefined
+      },
+      { new: true, runValidators: true }
+    )
+      .lean()
+      .exec();
+
+    return doc ? mapVenue(doc) : null;
+  },
+
   async getVenueById(id) {
     const doc = await VenueModel.findById(toNumericId(id)).lean().exec();
     return doc ? mapVenue(doc) : null;

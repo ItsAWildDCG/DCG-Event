@@ -40,5 +40,15 @@ export function createMetadataRouter(metadataService, requireAuth, requireOrgani
     })
   );
 
+  router.put(
+    '/venues/:venueId',
+    requireAuth,
+    requireOrganizerOrAdmin,
+    asyncHandler(async (req, res) => {
+      const venue = await metadataService.updateVenue(req.params.venueId, req.body);
+      res.json(venue);
+    })
+  );
+
   return router;
 }

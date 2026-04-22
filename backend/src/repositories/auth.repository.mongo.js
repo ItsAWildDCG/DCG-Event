@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { UserModel } from '../models/User.js';
 
 function formatDate(value) {
@@ -17,6 +18,19 @@ async function nextNumericId(model) {
 function toNumericId(id) {
   const parsed = Number(id);
   return Number.isFinite(parsed) ? parsed : id;
+}
+
+function idFilter(id) {
+  const numericId = Number(id);
+  if (Number.isFinite(numericId)) {
+    return { _id: numericId };
+  }
+
+  if (mongoose.isValidObjectId(id)) {
+    return { _id: new mongoose.Types.ObjectId(id) };
+  }
+
+  return { _id: String(id) };
 }
 
 function mapUser(doc) {
@@ -55,32 +69,32 @@ export const authRepositoryMongo = {
   },
 
   async findUserById(id) {
-    const doc = await UserModel.findById(toNumericId(id)).lean().exec();
+    const doc = await UserModel.collection.findOne(idFilter(id));
     return mapUser(doc);
   },
 
   async updateUserProfile(id, updates) {
-    const doc = await UserModel.findByIdAndUpdate(
-      toNumericId(id),
-      { name: updates.name, email: updates.email },
-      { new: true, runValidators: true }
-    )
-      .lean()
-      .exec();
+    const result = await UserModel.collection.updateOne(idFilter(id), {
+      $set: { name: updates.name, email: updates.email }
+    });
 
-    return mapUser(doc);
+    if (!result.matchedCount) {
+      return null;
+    }
+
+    return mapUser(await UserModel.collection.findOne(idFilter(id)));
   },
 
   async updateUserPassword(id, passwordHash) {
-    const doc = await UserModel.findByIdAndUpdate(
-      toNumericId(id),
-      { password: passwordHash },
-      { new: true, runValidators: true }
-    )
-      .lean()
-      .exec();
+    const result = await UserModel.collection.updateOne(idFilter(id), {
+      $set: { password: passwordHash }
+    });
 
-    return mapUser(doc);
+    if (!result.matchedCount) {
+      return null;
+    }
+
+    return mapUser(await UserModel.collection.findOne(idFilter(id)));
   },
 
   async listUsers() {
@@ -89,14 +103,14 @@ export const authRepositoryMongo = {
   },
 
   async updateUserRole(id, role) {
-    const doc = await UserModel.findByIdAndUpdate(
-      toNumericId(id),
-      { role },
-      { new: true, runValidators: true }
-    )
-      .lean()
-      .exec();
+    const result = await UserModel.collection.updateOne(idFilter(id), {
+      $set: { role }
+    });
 
-    return mapUser(doc);
+    if (!result.matchedCount) {
+      return null;
+    }
+
+    return mapUser(await UserModel.collection.findOne(idFilter(id)));
   }
 };

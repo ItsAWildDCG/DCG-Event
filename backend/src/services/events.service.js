@@ -33,6 +33,23 @@ export function createEventsService(eventsRepository, domainRepository) {
     throw new ApiError(403, 'You can only manage your own events');
   }
 
+  async function hydrateEventVenues(event) {
+    const venueIds = Array.isArray(event?.venueIds) ? event.venueIds : [];
+    if (venueIds.length === 0) {
+      return {
+        ...event,
+        venues: []
+      };
+    }
+
+    const venues = await Promise.all(venueIds.map((venueId) => domainRepository.getVenueById(venueId)));
+
+    return {
+      ...event,
+      venues: venues.filter(Boolean)
+    };
+  }
+
   async function listEvents(options = {}, viewer = null) {
     if (viewer?.role === 'admin') {
       return eventsRepository.listEvents(options);
@@ -86,7 +103,7 @@ export function createEventsService(eventsRepository, domainRepository) {
       throw new ApiError(404, 'Event not found');
     }
 
-    return event;
+    return hydrateEventVenues(event);
   }
 
   async function approveEvent(id, viewer) {

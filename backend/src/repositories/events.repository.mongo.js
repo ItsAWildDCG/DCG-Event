@@ -1,5 +1,6 @@
 import { EventModel } from '../models/Event.js';
 import { RegistrationModel } from '../models/Registration.js';
+import { VenueModel } from '../models/Venue.js';
 
 function formatDate(value) {
   if (!value) {
@@ -62,6 +63,52 @@ function mapRegistration(doc) {
   };
 }
 
+async function hydrateEventLocations(events) {
+  if (!Array.isArray(events) || events.length === 0) {
+    return events;
+  }
+
+  const missingLocationEvents = events.filter(
+    (event) => !String(event.location || '').trim() && Array.isArray(event.venueIds) && event.venueIds.length > 0
+  );
+
+  if (missingLocationEvents.length === 0) {
+    return events;
+  }
+
+  const uniqueVenueIds = [
+    ...new Set(missingLocationEvents.flatMap((event) => event.venueIds.map((venueId) => Number(venueId))))
+  ].filter((venueId) => Number.isFinite(venueId));
+
+  if (uniqueVenueIds.length === 0) {
+    return events;
+  }
+
+  const venues = await VenueModel.find({ _id: { $in: uniqueVenueIds } }, { _id: 1, name: 1 })
+    .lean()
+    .exec();
+  const venueNameById = new Map(venues.map((venue) => [String(venue._id), venue.name]));
+
+  return events.map((event) => {
+    if (String(event.location || '').trim()) {
+      return event;
+    }
+
+    const venueNames = (event.venueIds || [])
+      .map((venueId) => venueNameById.get(String(venueId)))
+      .filter(Boolean);
+
+    if (venueNames.length === 0) {
+      return event;
+    }
+
+    return {
+      ...event,
+      location: venueNames.join(', ')
+    };
+  });
+}
+
 export const eventsRepositoryMongo = {
   async listEvents(options = {}) {
     const search = String(options.search || '').trim();
@@ -107,7 +154,7 @@ export const eventsRepositoryMongo = {
 
     if (!options.search && !options.page && !options.limit) {
       const docs = await EventModel.find(filter).sort({ _id: 1 }).lean().exec();
-      return docs.map(mapEvent);
+      return hydrateEventLocations(docs.map(mapEvent));
     }
 
     const totalItems = await EventModel.countDocuments(filter).exec();
@@ -121,8 +168,10 @@ export const eventsRepositoryMongo = {
       .lean()
       .exec();
 
+    const items = await hydrateEventLocations(docs.map(mapEvent));
+
     return {
-      items: docs.map(mapEvent),
+      items,
       page: currentPage,
       totalPages,
       totalItems,
@@ -155,7 +204,12 @@ export const eventsRepositoryMongo = {
 
   async getEventById(id) {
     const doc = await EventModel.findById(toNumericId(id)).lean().exec();
-    return doc ? mapEvent(doc) : null;
+    if (!doc) {
+      return null;
+    }
+
+    const [event] = await hydrateEventLocations([mapEvent(doc)]);
+    return event || null;
   },
 
   async updateEvent(id, updates) {

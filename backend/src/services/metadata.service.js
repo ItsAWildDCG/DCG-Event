@@ -35,10 +35,35 @@ export function createMetadataService(domainRepository) {
     });
   }
 
+  async function updateVenue(id, payload) {
+    if (!payload.name || !payload.city || payload.capacity === undefined) {
+      throw new ApiError(400, 'name, city, capacity are required');
+    }
+
+    const capacity = Number(payload.capacity);
+    if (Number.isNaN(capacity) || capacity < 1) {
+      throw new ApiError(400, 'capacity must be a positive number');
+    }
+
+    const updated = await domainRepository.updateVenue(id, {
+      name: payload.name,
+      address: payload.address || '',
+      city: payload.city,
+      capacity
+    });
+
+    if (!updated) {
+      throw new ApiError(404, 'Venue not found');
+    }
+
+    return updated;
+  }
+
   return {
     listCategories,
     createCategory,
     listVenues,
-    createVenue
+    createVenue,
+    updateVenue
   };
 }
