@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 function getBadges(events) {
   const count = events.length;
@@ -100,7 +101,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {loading ? <p className="status">Loading your registrations...</p> : null}
+      {loading ? <LoadingSpinner /> : null}
       {error ? <p className="error">{error}</p> : null}
 
       <div className="card">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -48,7 +49,7 @@ export function EventsPage() {
         </label>
         <div className="result-pill">{events.length} shown</div>
       </div>
-      {loading ? <p className="status">Loading events...</p> : null}
+      {loading ? <LoadingSpinner /> : null}
       {error ? <p className="error">{error}</p> : null}
       <div className="grid">
         {events.map((event) => (

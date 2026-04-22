@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function MyTicketsPage() {
   const [orders, setOrders] = useState([]);
@@ -36,7 +37,7 @@ export function MyTicketsPage() {
         <p className="status">Track your booking and payment history.</p>
       </div>
 
-      {loading ? <p className="status">Loading orders...</p> : null}
+      {loading ? <LoadingSpinner /> : null}
       {error ? <p className="error">{error}</p> : null}
 
       <div className="grid">

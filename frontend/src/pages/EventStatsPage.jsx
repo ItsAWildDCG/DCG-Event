@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function EventStatsPage() {
   const [events, setEvents] = useState([]);
@@ -61,7 +62,7 @@ export function EventStatsPage() {
         <h1>Event Statistics</h1>
         <p className="status">Track performance for events you can manage.</p>
 
-        {loadingEvents ? <p className="status">Loading manageable events...</p> : null}
+        {loadingEvents ? <LoadingSpinner /> : null}
         {error ? <p className="error">{error}</p> : null}
 
         {events.length > 0 ? (
@@ -86,7 +87,7 @@ export function EventStatsPage() {
         ) : null}
       </div>
 
-      {loadingStats ? <p className="status">Loading statistics...</p> : null}
+      {loadingStats ? <LoadingSpinner /> : null}
 
       {totals ? (
         <div className="grid dashboard-summary-grid">

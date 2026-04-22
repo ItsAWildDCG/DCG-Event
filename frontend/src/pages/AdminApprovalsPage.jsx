@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function AdminApprovalsPage() {
   const [events, setEvents] = useState([]);
@@ -44,7 +45,7 @@ export function AdminApprovalsPage() {
         <p className="status">Review organizer submissions and approve publishing.</p>
         {status ? <p className="success">{status}</p> : null}
         {error ? <p className="error">{error}</p> : null}
-        {loading ? <p className="status">Loading pending events...</p> : null}
+        {loading ? <LoadingSpinner /> : null}
         <div className="admin-list">
           {events.map((event) => (
             <article key={event.id} className="admin-row">

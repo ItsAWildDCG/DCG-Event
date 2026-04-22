@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../services/api';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 const initialForm = {
   title: '',
@@ -210,7 +211,7 @@ export function AdminPage() {
         <h2>Current Events</h2>
         {status ? <p className="success">{status}</p> : null}
         {error ? <p className="error">{error}</p> : null}
-        {loading ? <p className="status">Loading events...</p> : null}
+        {loading ? <LoadingSpinner /> : null}
         <div className="admin-list">
           {events.map((event) => (
             <article key={event.id} className="admin-row">

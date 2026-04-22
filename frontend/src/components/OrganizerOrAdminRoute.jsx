@@ -1,11 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { LoadingSpinner } from './LoadingSpinner';
 
 export function OrganizerOrAdminRoute({ children }) {
   const { loading, isAuthenticated, user } = useAuth();
 
   if (loading) {
-    return <p className="status">Loading access check...</p>;
+    return <LoadingSpinner />;
   }
 
   if (!isAuthenticated) {

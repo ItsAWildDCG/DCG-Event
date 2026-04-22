@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 const initialState = {
   title: '',
@@ -137,7 +138,7 @@ export function EventFormPage({ mode }) {
   }
 
   if (loading) {
-    return <p className="status">Loading form...</p>;
+    return <LoadingSpinner />;
   }
 
   return (

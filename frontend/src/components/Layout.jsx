@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { TetrisBackground } from './TetrisBackground';
 
 export function Layout({ children }) {
   const { isAuthenticated, user, logout } = useAuth();
@@ -8,6 +9,7 @@ export function Layout({ children }) {
 
   return (
     <div className="app-shell">
+      <TetrisBackground />
       <header className="topbar">
         <Link to="/" className="brand">
           DCG Event
@@ -20,7 +22,7 @@ export function Layout({ children }) {
           {isAdmin || isOrganizer ? <NavLink to="/events/new">Create Event</NavLink> : null}
           {isAdmin || isOrganizer ? <NavLink to="/events/stats">Event Stats</NavLink> : null}
           {isAdmin ? <NavLink to="/admin/approvals">Approvals</NavLink> : null}
-          {isAdmin ? <NavLink to="/admin">Admin Portal</NavLink> : null}
+          {isAdmin ? <NavLink to="/admin" end>Admin Portal</NavLink> : null}
         </nav>
         <div className="auth-area">
           {isAuthenticated ? (

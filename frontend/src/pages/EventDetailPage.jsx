@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { LoadingSpinner } from '../components/LoadingSpinner';
 
 export function EventDetailPage() {
   const { eventId } = useParams();
@@ -203,7 +204,7 @@ export function EventDetailPage() {
   }
 
   if (loading) {
-    return <p className="status">Loading event...</p>;
+    return <LoadingSpinner />;
   }
 
   if (error && !event) {
@@ -473,7 +474,7 @@ export function EventDetailPage() {
       ) : null}
 
       {canManageEvent ? (
-        <div>
+        <div className="card form-card" style={{ marginTop: '2rem' }}>
           <h2>Registrations</h2>
           <p>{registrations.length} attendee(s)</p>
         </div>
